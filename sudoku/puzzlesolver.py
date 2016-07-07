@@ -76,7 +76,11 @@ class PuzzleSolver(object):
                         result.append(square)
                 if len(result) == 1:
                     self._puzzle.grid[result[0]] = digit
-                    self._puzzle.candidates[result[0]] = p_const.VALUE_TO_CANDIDATES[digit]
+                    try:
+                        self._puzzle.candidates[result[0]] = p_const.VALUE_TO_CANDIDATES[digit]
+                    except KeyError:
+                        return False
+        return True
 
     def fill_singles(self):
         """
