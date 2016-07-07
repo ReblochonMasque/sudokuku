@@ -328,7 +328,7 @@ G . . .|6 . 3|. 7 .
 H 5 . .|2 . .|. . .
 I 1 . 4|. . .|. . .
 """
-        result = self.valid_grid_0.print_puzzle()
+        result = self.valid_grid_0.get_puzzle_str()
         self.assertEqual(result, expected)
 
     # --- BASIC TESTS FOR GRID CLASS FORMATION -------------------------------------

@@ -179,7 +179,7 @@ I | 123456789  123456789  123456789 | 123456789  123456789  123456789 | 12345678
    --------------------------------- --------------------------------- --------------------------------- \n\
 """
         self.assertEqual(str(solver._puzzle), pre_candidates)
-        self.assertEqual(solver._puzzle.print_puzzle(), pre_puzzle)
+        self.assertEqual(solver._puzzle.get_puzzle_str(), pre_puzzle)
 
         solver.fill_singles()
         post_puzzle = """  a b c d e f g h i
@@ -211,7 +211,7 @@ I | 123456789  123456789  123456789 | 123456789  123456789  123456789 | 12345678
    --------------------------------- --------------------------------- --------------------------------- \n\
 """
         self.assertEqual(str(solver._puzzle), post_candidates)
-        self.assertEqual(solver._puzzle.print_puzzle(), post_puzzle)  # check state
+        self.assertEqual(solver._puzzle.get_puzzle_str(), post_puzzle)  # check state
 
     def test_fill_singles_full(self):
         """tests that fill single on a solved puzzle does not modify the state
@@ -253,7 +253,7 @@ I | ..3......  ....5....  .....6... | .......8.  1........  .2....... | ........
 """
 
         self.assertEqual(str(solver._puzzle), pre_candidates)
-        self.assertEqual(solver._puzzle.print_puzzle(), pre_puzzle)
+        self.assertEqual(solver._puzzle.get_puzzle_str(), pre_puzzle)
 
         solver.fill_singles()
         post_puzzle = """  a b c d e f g h i
@@ -285,7 +285,7 @@ I | ..3......  ....5....  .....6... | .......8.  1........  .2....... | ........
    --------------------------------- --------------------------------- --------------------------------- \n\
 """
         self.assertEqual(str(solver._puzzle), post_candidates)
-        self.assertEqual(solver._puzzle.print_puzzle(), post_puzzle)
+        self.assertEqual(solver._puzzle.get_puzzle_str(), post_puzzle)
 
 
     def test_fill_singles_grid_1(self):
@@ -325,7 +325,7 @@ I | ......7..  .2.......  ........9 | .......8.  ....5....  ..3...... | .....6..
 """
 
         self.assertEqual(str(solver._puzzle), pre_candidates)
-        self.assertEqual(solver._puzzle.print_puzzle(), pre_puzzle)
+        self.assertEqual(solver._puzzle.get_puzzle_str(), pre_puzzle)
 
         solver.fill_singles()
         post_puzzle = """  a b c d e f g h i
@@ -357,7 +357,7 @@ I | ......7..  .2.......  ........9 | .......8.  ....5....  ..3...... | .....6..
    --------------------------------- --------------------------------- --------------------------------- \n\
 """
         self.assertEqual(str(solver._puzzle), post_candidates)
-        self.assertEqual(solver._puzzle.print_puzzle(), post_puzzle)
+        self.assertEqual(solver._puzzle.get_puzzle_str(), post_puzzle)
 
 
     def test_prppagate_empty(self):
@@ -397,7 +397,7 @@ I | 123456789  123456789  123456789 | 123456789  123456789  123456789 | 12345678
    --------------------------------- --------------------------------- --------------------------------- \n\
 """
         self.assertEqual(str(solver._puzzle), pre_candidates)
-        self.assertEqual(solver._puzzle.print_puzzle(), pre_puzzle)
+        self.assertEqual(solver._puzzle.get_puzzle_str(), pre_puzzle)
 
         solver.propagate()
         post_puzzle = """  a b c d e f g h i
@@ -429,14 +429,14 @@ I | 123456789  123456789  123456789 | 123456789  123456789  123456789 | 12345678
    --------------------------------- --------------------------------- --------------------------------- \n\
 """
         self.assertEqual(str(solver._puzzle), post_candidates)
-        self.assertEqual(solver._puzzle.print_puzzle(), post_puzzle)
+        self.assertEqual(solver._puzzle.get_puzzle_str(), post_puzzle)
 
     def test_prppagate_full(self):
         """tests that propagation on an empty puzzle does not change the state
         """
         grid_string = '437256189569183742812794536673921458985467321241538697124379865798645213356812974'
         grid = make_grid_from_string(grid_string)
-        grid.print_puzzle()
+        grid.get_puzzle_str()
         grid.parse_grid_candidates()
 
         solver = PuzzleSolver(grid.clone())
@@ -470,7 +470,7 @@ I | ..3......  ....5....  .....6... | .......8.  1........  .2....... | ........
 """
 
         self.assertEqual(str(solver._puzzle), pre_candidates)
-        self.assertEqual(solver._puzzle.print_puzzle(), pre_puzzle)
+        self.assertEqual(solver._puzzle.get_puzzle_str(), pre_puzzle)
 
         solver.propagate()
         post_puzzle = """  a b c d e f g h i
@@ -502,7 +502,7 @@ I | ..3......  ....5....  .....6... | .......8.  1........  .2....... | ........
    --------------------------------- --------------------------------- --------------------------------- \n\
 """
         self.assertEqual(str(solver._puzzle), post_candidates)
-        self.assertEqual(solver._puzzle.print_puzzle(), post_puzzle)
+        self.assertEqual(solver._puzzle.get_puzzle_str(), post_puzzle)
 
     def test_propagate_grid_0(self):
         """tests change of state whan calling propagate on a puzzle
@@ -539,7 +539,7 @@ H 5 . .|2 . .|. . .\n\
 I 1 . 4|. . .|. . .\n\
 """
         self.assertEqual(str(solver._puzzle), pre_candidates)
-        self.assertEqual(solver._puzzle.print_puzzle(), pre_puzzle)
+        self.assertEqual(solver._puzzle.get_puzzle_str(), pre_puzzle)
 
         post_candidates = """        a          b          c           d          e          f           g          h          i      \n\
    --------------------------------- --------------------------------- --------------------------------- \n\
@@ -571,7 +571,7 @@ I 1 . 4|. . .|. . .\n\
 """
         solver.propagate()
         self.assertEqual(str(solver._puzzle), post_candidates)
-        self.assertEqual(solver._puzzle.print_puzzle(), post_puzzle)
+        self.assertEqual(solver._puzzle.get_puzzle_str(), post_puzzle)
 
     def test_eliminate_candidates_grid_empty(self):
         """tests that eliminate candidates does not change the state of an empty puzzle

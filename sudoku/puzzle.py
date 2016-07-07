@@ -48,7 +48,7 @@ class Puzzle(object):
         makes a clone of the puzzle
         :return: a Puzzle object, clone of self
         """
-        cloned_puzzle =  make_grid_from_string(self.print_puzzle())
+        cloned_puzzle =  make_grid_from_string(self.get_puzzle_str())
         assert cloned_puzzle.is_valid()
         cloned_puzzle.parse_grid_candidates()
         return cloned_puzzle
@@ -156,7 +156,7 @@ class Puzzle(object):
         # print(result)
         return result
 
-    def print_puzzle(self):
+    def get_puzzle_str(self):
         """
         returns a string to print a puzzle
         :return: a string that represents a puzzle
