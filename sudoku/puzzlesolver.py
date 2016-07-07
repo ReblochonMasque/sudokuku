@@ -164,7 +164,7 @@ class PuzzleSolver(object):
 
             next_square = self._get_next_square()
             candidates = [d for d in self._puzzle.candidates[next_square] if d not in '.0']
-            liste_candidates.push(copy(candidates))
+            liste_candidates.append(list(candidates))
             candidate = candidates.pop()
             new_solver = self._clone()
             new_solver._puzzle.grid[next_square] = candidate
