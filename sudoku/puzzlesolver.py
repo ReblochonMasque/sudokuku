@@ -158,29 +158,60 @@ class PuzzleSolver(object):
         assigns the next candidate value to the empty square with the less candidates
         recursively calls solve() on the new puzzle
         """
-        print('ouverture de search')
-        if self._is_solved():  # cas d'arrêt
-            print('is solved')
-            return str(self)
-        if self.eliminate_propagate_fill():
-            print('self.eliminate_propagate_fill() verifié')
+        temp = self
+        liste_candidates = []
+        while not self._is_solved():
+
             next_square = self._get_next_square()
             candidates = [d for d in self._puzzle.candidates[next_square] if d not in '.0']
-
+            liste_candidates.push(copy(candidates))
             candidate = candidates.pop()
             new_solver = self._clone()
             new_solver._puzzle.grid[next_square] = candidate
 
-            if new_solver._is_valid():
-                print('new_solver._is_valid() verifié')
-                res = new_solver.search()
-                return str(res)
-                print('is_valid new solver')
+            temp = new_solver
+
+            if not temp.eliminate_propagate_fill():
+                if len(candidates) > 0:  # on change de feuille
+                    candidate = candidates.pop()
+                    new_solver = new_solver._clone()
+                    new_solver._puzzle.grid[next_square] = candidate
+                else:  # on doit changer la racine
+                    candidates = liste_candidates.pop()
+                    candidate = candidates.pop()   #pas sur de ça
+                    new_solver = new_solver._clone()   #pas sur de ça
+                    new_solver._puzzle.grid[next_square] = candidate   #pas sur de ça
+            # si c'est bon :
             else:
-                self._puzzle.grid[next_square] = candidates.pop()
-                self.search()
-                print('refus de l\'hypothèse')
-       
+                continue  # recommence la boucle au début.
+
+        return str(self)
+
+        # print('ouverture de search')
+        # if self._is_solved():  # cas d'arrêt
+        #     print('is solved')
+        #     return str(self)
+        # next_square = self._get_next_square()
+        # candidates = [d for d in self._puzzle.candidates[next_square] if d not in '.0']
+        # candidate = candidates.pop()
+        # new_solver = self._clone()
+        # new_solver._puzzle.grid[next_square] = candidate
+        # if new_solver.eliminate_propagate_fill():
+        #     print('self.eliminate_propagate_fill() verifié')
+        #
+        #
+        #     if new_solver._is_valid():
+        #         print('new_solver._is_valid() verifié')
+        #         res = new_solver.search()
+        #         return str(res)
+        #         print('is_valid new solver')
+        #     else:
+        #         self._puzzle.grid[next_square] = candidates.pop()
+        #         self.search()
+        #         print('refus de l\'hypothèse')
+        # else:
+        #     candidate = candidates.pop()
+        #     # self.search()
 
 
     # def search(self):
