@@ -137,8 +137,11 @@ class PuzzleSolver(object):
             pre_grid_state, pre_candidates_state = repr(self._puzzle), str(self._puzzle)
             if not self.eliminate_candidates() or not self._is_valid():
                 return False
-            self.propagate()
-            self.fill_singles()
+            if not self.propagate() or not self._is_valid():
+                return False
+            if not self.fill_singles() or not self._is_valid():
+                return False
+            # @TODO: 3 times self._is_valid() to refactor when time comes
             post_grid_state, post_candidates_state = repr(self._puzzle), str(self._puzzle)
             if pre_grid_state == post_grid_state and pre_candidates_state == post_candidates_state:
                 return True
