@@ -158,55 +158,87 @@ class PuzzleSolver(object):
         assigns the next candidate value to the empty square with the less candidates
         recursively calls solve() on the new puzzle
         """
-        # if not self._is_valid():
-        #     return 'stuck there'
-        # if self._is_solved():
-        #     return str(self)
-
-        # new_solver = self._clone()
-
-        # if not new_solver._is_valid():
-        #     #raise PuzzleInvalidException
-        #     return 'stuck there 2' #raise  error°1
-        if self._is_solved():
+        print('ouverture de search')
+        if self._is_solved():  # cas d'arrêt
+            print('is solved')
             return str(self)
+        if self.eliminate_propagate_fill():
+            print('self.eliminate_propagate_fill() verifié')
+            next_square = self._get_next_square()
+            candidates = [d for d in self._puzzle.candidates[next_square] if d not in '.0']
 
-        next_square = self._get_next_square()
-        candidates = [d for d in self._puzzle.candidates[next_square] if d not in '.0']
-
-        # if next_square is None:
-        #     # print(new_solver)
-        #     return str(new_solver + 'next square was None')
-
-        while len(candidates) > 0:   # or not new_solver._is_solved()  :
-            new_solver = self._clone()
             candidate = candidates.pop()
+            new_solver = self._clone()
             new_solver._puzzle.grid[next_square] = candidate
-            if not new_solver.eliminate_propagate_fill():
-                continue
 
-            # if not new_solver._is_valid():
-            #     #new_solver._puzzle.grid[next_square] = candidate
-                # new_solver.eliminate_propagate_fill()
-                # break
-            else :
+            if new_solver._is_valid():
+                print('new_solver._is_valid() verifié')
+                res = new_solver.search()
+                return str(res)
+                print('is_valid new solver')
+            else:
+                self._puzzle.grid[next_square] = candidates.pop()
+                self.search()
+                print('refus de l\'hypothèse')
+       
 
-                new_solver.search()
 
-        return str(new_solver)
-        # for candidate in candidates:
-        #     new_solver._puzzle.grid[next_square] = candidate
-        #     print('next_square =', next_square, 'candidate =', candidate, ' - ', new_solver)
-        #     #try:
-        #     new_solver.search()
-        #     if new_solver._is_valid():
-        #         break
-        #     else:
-        #         self.search()
-        #     # except PuzzleInvalidException:   # except error°1
-        #     #     print('coucou et vive le qwerty')
-        #     #     return self   # clone d'avant
-        # return str(new_solver)
+    # def search(self):
+    #     """
+    #     creates a new clone solver
+    #     assigns the next candidate value to the empty square with the less candidates
+    #     recursively calls solve() on the new puzzle
+    #     """
+    #     # if not self._is_valid():
+    #     #     return 'stuck there'
+    #     # if self._is_solved():
+    #     #     return str(self)
+    #
+    #     # new_solver = self._clone()
+    #
+    #     # if not new_solver._is_valid():
+    #     #     #raise PuzzleInvalidException
+    #     #     return 'stuck there 2' #raise  error°1
+    #     if self._is_solved():
+    #         return str(self)
+    #
+    #     next_square = self._get_next_square()
+    #     candidates = [d for d in self._puzzle.candidates[next_square] if d not in '.0']
+    #
+    #     # if next_square is None:
+    #     #     # print(new_solver)
+    #     #     return str(new_solver + 'next square was None')
+    #
+    #     while len(candidates) > 0:   # or not new_solver._is_solved()  :
+    #         new_solver = self._clone()
+    #         candidate = candidates.pop()
+    #         new_solver._puzzle.grid[next_square] = candidate
+    #         if not new_solver.eliminate_propagate_fill():
+    #             continue
+    #
+    #         # if not new_solver._is_valid():
+    #         #     #new_solver._puzzle.grid[next_square] = candidate
+    #             # new_solver.eliminate_propagate_fill()
+    #             # break
+    #         else :
+    #
+    #             new_solver.search()
+    #
+    #     return str(new_solver)
+    #     # for candidate in candidates:
+    #     #     new_solver._puzzle.grid[next_square] = candidate
+    #     #     print('next_square =', next_square, 'candidate =', candidate, ' - ', new_solver)
+    #     #     #try:
+    #     #     new_solver.search()
+    #     #     if new_solver._is_valid():
+    #     #         break
+    #     #     else:
+    #     #         self.search()
+    #     #     # except PuzzleInvalidException:   # except error°1
+    #     #     #     print('coucou et vive le qwerty')
+    #     #     #     return self   # clone d'avant
+    #     # return str(new_solver)
+    #
 
 
     def solve(self):
