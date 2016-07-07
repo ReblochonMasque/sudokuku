@@ -82,6 +82,7 @@ class PuzzleSolver(object):
         """
         completes a unit that is missing only one value
         by updating the grid and the candidates values
+        :return: False if an inconsistency is discovered, True otherwise
         """
         for unit in p_const.UNIT_LISTS:
             result = []
@@ -94,7 +95,11 @@ class PuzzleSolver(object):
                     result_string_builder[int(val) - 1] = '.'
             if len(result) == 1:
                 self._puzzle.grid[result[0]] = p_const.CANDIDATES_TO_VALUE[''.join(result_string_builder)]
-                self._puzzle.candidates[result[0]] = ''.join(result_string_builder)
+                try:
+                    self._puzzle.candidates[result[0]] = ''.join(result_string_builder)
+                except KeyError:
+                    return False
+        return True
 
     def _get_next_square(self):
         """
@@ -170,70 +175,86 @@ class PuzzleSolver(object):
             return self.search()
         self.solve()
 
-def main(argv):
+# def main(argv):
+#
+#     # require search
+#     g1 = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
+#     partial_s1 = '4.....8.5.3..........7......2.....6.....8.4...4..1.......6.3.7.5.32.1...1.4......'
+#     s1 = '417369825632158947958724316825437169791586432346912758289643571573291684164875293'
+#     solve_puzzle('g1', g1, s1)
+#
+#     # require search
+#     g2 = '1...895..5....7819........72.4..8.7.9.71.54.8.8.7..3.531.4..78.4682....3..985...1'
+#     partial_s2 = '172.895.454..2781989.5142.7254938176937165428681742395315496782468271953729853641'
+#     s2 = '172389564543627819896514237254938176937165428681742395315496782468271953729853641'
+#     solve_puzzle('g2', g2, s2)
+#     print()
+#
+#     # exits with "stuck there"
+#     g3 = '58261..9.3..79528117928..6....4389..9..126..8..89571..25..61.79.9..72..3....496.2'
+#     s3 = '582614397346795281179283564761438925935126748428957136253861479694572813817349652'
+#     solve_puzzle('g3', g3, s3)
+#     print()
+#
+#     # Expert level
+#     # Exits with "stuck there"
+#     g5 = '5.9........6.......1.85...3...7....8..51...4.3...4.7..9.1......7.4.1639.........4'
+#     # g5 = '5.9........6.......1.85...3...7.9..8..51...4.3...4.7..9.1......7.4.1639.........4'
+#     s5 = '539674821826391475417852963142769538675138249398245716951423687784516392263987154'
+#     solve_puzzle('g5', g5, s5)
+#     print()
+#
+#     # exits with key error
+#     # self._puzzle.grid[result[0]] = p_const.CANDIDATES_TO_VALUE[''.join(res_string)]
+#     # KeyError: '..3.5....'
+#     g4 = '2.....38..........1.3..4.575.73.281.......236....8..........1....28......6...7.4.'
+#     s4 = '294756381675138492183294657547362819918475236326981574759643128432819765861527943'
+#     solve_puzzle('g4', g4, s4)
+#     print()
+#
+# def solve_puzzle(name, provided_string, expected_solved_string):
+#
+#     print('\n\n#----N-E-X-T---T-E-S-T---' + name + '---------------------------------------------#\n')
+#     print('original string                 - ', provided_string)
+#
+#     provided_puzzle = make_grid_from_string(provided_string)
+#     expected_puzzle = make_grid_from_string(expected_solved_string)
+#     solver = PuzzleSolver(provided_puzzle.clone())
+#     res = solver.solve()
+#     if len(res) == 81:
+#         result = make_grid_from_string(res)
+#     else:
+#         result = make_grid_from_string('.' * 81)
+#
+#     print('Solution                        - ', repr(result))
+#     print('Exit search/solve with          - ', res)
+#
+#     print('\nstarting puzzle :')
+#     print(provided_puzzle.get_puzzle_str())
+#     print('expected solution :')
+#     print(expected_puzzle.get_puzzle_str())
+#
+#     print('obtained solution :')
+#     print(result.get_puzzle_str())
+#
+#
 
-    # require search
-    g1 = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
-    partial_s1 = '4.....8.5.3..........7......2.....6.....8.4...4..1.......6.3.7.5.32.1...1.4......'
-    s1 = '417369825632158947958724316825437169791586432346912758289643571573291684164875293'
-    solve_puzzle('g1', g1, s1)
 
-    # require search
-    g2 = '1...895..5....7819........72.4..8.7.9.71.54.8.8.7..3.531.4..78.4682....3..985...1'
-    partial_s2 = '172.895.454..2781989.5142.7254938176937165428681742395315496782468271953729853641'
-    s2 = '172389564543627819896514237254938176937165428681742395315496782468271953729853641'
-    solve_puzzle('g2', g2, s2)
-    print()
-
-    # exits with "stuck there"
-    g3 = '58261..9.3..79528117928..6....4389..9..126..8..89571..25..61.79.9..72..3....496.2'
-    s3 = '582614397346795281179283564761438925935126748428957136253861479694572813817349652'
-    solve_puzzle('g3', g3, s3)
-    print()
-
-    # Expert level
-    # Exits with "stuck there"
-    g5 = '5.9........6.......1.85...3...7....8..51...4.3...4.7..9.1......7.4.1639.........4'
-    # g5 = '5.9........6.......1.85...3...7.9..8..51...4.3...4.7..9.1......7.4.1639.........4'
-    s5 = '539674821826391475417852963142769538675138249398245716951423687784516392263987154'
-    solve_puzzle('g5', g5, s5)
-    print()
-
-    # exits with key error
-    # self._puzzle.grid[result[0]] = p_const.CANDIDATES_TO_VALUE[''.join(res_string)]
-    # KeyError: '..3.5....'
-    g4 = '2.....38..........1.3..4.575.73.281.......236....8..........1....28......6...7.4.'
-    s4 = '294756381675138492183294657547362819918475236326981574759643128432819765861527943'
-    solve_puzzle('g4', g4, s4)
-    print()
-
-def solve_puzzle(name, provided_string, expected_solved_string):
-
-    print('\n\n#----N-E-X-T---T-E-S-T---' + name + '---------------------------------------------#\n')
-    print('original string                 - ', provided_string)
-
-    provided_puzzle = make_grid_from_string(provided_string)
-    expected_puzzle = make_grid_from_string(expected_solved_string)
-    solver = PuzzleSolver(provided_puzzle.clone())
-    res = solver.solve()
-    if len(res) == 81:
-        result = make_grid_from_string(res)
-    else:
-        result = make_grid_from_string('.' * 81)
-
-    print('Solution                        - ', repr(result))
-    print('Exit search/solve with          - ', res)
-
-    print('\nstarting puzzle :')
-    print(provided_puzzle.get_puzzle_str())
-    print('expected solution :')
-    print(expected_puzzle.get_puzzle_str())
-
-    print('obtained solution :')
-    print(result.get_puzzle_str())
-
-
-
-
-if __name__ == '__main__':
-    sys.exit(main(sys.argv))
+# if __name__ == '__main__':
+#     # sys.exit(main(sys.argv))
+#     grid_string_1 = '1...895..5....7819........72.4..8.7.9.71.54.8.8.7..3.531.4..78.4682....3..985...1'
+#     grid_1 = make_grid_from_string(grid_string_1)
+#     grid_1.parse_grid_candidates()
+#
+#
+#     solver = PuzzleSolver(grid_1.clone())
+#     solver.eliminate_candidates()
+#     solver.propagate()
+#     print('prepuzzle = \n' + solver._puzzle.get_puzzle_str())
+#     print('pre_candidate = \n' + solver._puzzle.__str__())
+#
+#     solver.fill_singles()
+#     #solver.eliminate_candidates()
+#     # solver.fill_singles()
+#     print('postpuzzle = \n' + solver._puzzle.get_puzzle_str())
+#     print('post_candidate = \n' + solver._puzzle.__str__())
