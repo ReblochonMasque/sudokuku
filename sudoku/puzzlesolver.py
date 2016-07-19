@@ -63,15 +63,25 @@ class PuzzleSolver(object):
             if current_value not in '.0':
                 # this says if there is an inconsistency
                 # that means it must return False to signal it
-                if self._puzzle.candidates[square] != p_const.VALUE_TO_CANDIDATES[current_value]:
-                    return False
+                # if self._puzzle.candidates[square] != p_const.VALUE_TO_CANDIDATES[current_value]:
+                #     # la cse assigne doit etre sous la forme de "........9" et est sous la forme
+                #     # "........." ou "...4...8."
+                #     print("c'est celui la !! ------------------------------------------------")
+                #     print("premier=", self._puzzle.candidates[square], "deuxième=", p_const.VALUE_TO_CANDIDATES[current_value])
+                #     return False
                 for peer in p_const.PEERS[square]:
                     self._puzzle.candidates[peer] = self._puzzle.candidates[peer].replace(current_value, '.')
+
+        if not(self._is_valid()):
+            print(" probleme de validité    ----------------------------------------------------------")
+            return False
         return True
 
     def propagate(self):
         """if a UNIT has only one possible place for a value,
          assign this value there, and adjust the candidates for this place
+         :return: False if an inconsistency is discovered --> makes the puzzle invalid
+                  True otherwise
         """
         for unit in p_const.UNIT_LISTS:
             for digit in p_const.DIGITS:
@@ -86,6 +96,9 @@ class PuzzleSolver(object):
                         self._puzzle.grid[sq] = digit
                     except KeyError:
                         return False
+        if not (self._is_valid()):
+            return False
+
         return True
 
     def fill_singles(self):
@@ -110,6 +123,9 @@ class PuzzleSolver(object):
                     self._puzzle.grid[sq] = p_const.CANDIDATES_TO_VALUE[''.join(result_string_builder)]
                 except KeyError:
                     return False
+        if not (self._is_valid()):
+            return False
+
         return True
 
     def _get_next_square(self):
@@ -141,15 +157,18 @@ class PuzzleSolver(object):
         while not self._puzzle.is_solved():
             pre_grid_state, pre_candidates_state = repr(self._puzzle), str(self._puzzle)
             if not self.eliminate_candidates() or not self._is_valid():
+                print("CONTRADICTION CAS N°1 -------------------------------------------------------------")
                 return False
             if not self.propagate() or not self._is_valid():
+                print("CONTRADICTION CAS N°2 -------------------------------------------------------------")
                 return False
             if not self.fill_singles() or not self._is_valid():
+                print("CONTRADICTION CAS N°3 -------------------------------------------------------------")
                 return False
             # @TODO: 3 times self._is_valid() to refactor when time comes
             post_grid_state, post_candidates_state = repr(self._puzzle), str(self._puzzle)
             if pre_grid_state == post_grid_state and pre_candidates_state == post_candidates_state:
-                return True
+                break
         return True
 
     def search(self):
@@ -158,6 +177,10 @@ class PuzzleSolver(object):
         assigns the next candidate value to the empty square with the less candidates
         recursively calls solve() on the new puzzle
         """
+        if self._is_solved():
+            print("sortie is_solved n°1   ---------------------------------------------------------------------")
+            print(str(self))
+            return self
 
         next_square = self._get_next_square()
         candidates = [d for d in self._puzzle.candidates[next_square] if d not in '.0']
@@ -165,18 +188,23 @@ class PuzzleSolver(object):
         while len(candidates) > 0 and not(self._is_solved()):
             new_solver = self._clone()
             new_solver._puzzle.grid[next_square] = candidates.pop()
+            print(next_square)
+            print(candidates)
             print(new_solver._puzzle.grid[next_square])
-            print(new_solver)
-            new_solver.eliminate_propagate_fill()
-
-            if self._is_solved():
-                return (new_solver)
-            elif not(new_solver._is_valid()):
+            #print("clone=" ,new_solver)
+            if not(new_solver.eliminate_propagate_fill()):  # contradiction ou
+                print("clone                           - " , new_solver)
                 continue
+
+            elif self._is_solved():
+                print("sortie is_solved n°2   ---------------------------------------------------------------------")
+                return new_solver
+            # elif not(new_solver._is_valid()):
+            #     continue
             else:
                 new_solver.search()
 
-
+        return self
 
     def solve(self):
         """
@@ -192,12 +220,13 @@ class PuzzleSolver(object):
 
 
 def main(argv):
-
-    # require search
-    g1 = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
-    partial_s1 = '4.....8.5.3..........7......2.....6.....8.4...4..1.......6.3.7.5.32.1...1.4......'
-    s1 = '417369825632158947958724316825437169791586432346912758289643571573291684164875293'
-    solve_puzzle('g1', g1, s1)
+    #
+    # # require search
+    # g1 = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
+    # partial_s1 = '4.....8.5.3..........7......2.....6.....8.4...4..1.......6.3.7.5.32.1...1.4......'
+    # s1 = '417369825632158947958724316825437169791586432346912758289643571573291684164875293'
+    # #     417369825632158947958724316825437169791586432346912758289643571573291684164875293
+    # solve_puzzle('g1', g1, s1)
 
     # require search
     g2 = '1...895..5....7819........72.4..8.7.9.71.54.8.8.7..3.531.4..78.4682....3..985...1'
@@ -217,6 +246,8 @@ def main(argv):
     g5 = '5.9........6.......1.85...3...7....8..51...4.3...4.7..9.1......7.4.1639.........4'
     # g5 = '5.9........6.......1.85...3...7.9..8..51...4.3...4.7..9.1......7.4.1639.........4'
     s5 = '539674821826391475417852963142769538675138249398245716951423687784516392263987154'
+    #     539674821826391475417852963142769538675138249398245716951423687784516392263987154
+
     solve_puzzle('g5', g5, s5)
     print()
 
@@ -225,6 +256,7 @@ def main(argv):
     # KeyError: '..3.5....'
     g4 = '2.....38..........1.3..4.575.73.281.......236....8..........1....28......6...7.4.'
     s4 = '294756381675138492183294657547362819918475236326981574759643128432819765861527943'
+    #     294756381675138492183294657547362819918475236326981574759643128432819765861527943
     solve_puzzle('g4', g4, s4)
     print()
 
