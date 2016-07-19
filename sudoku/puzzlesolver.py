@@ -14,6 +14,18 @@ import sys
 from sudoku import puzzleconstants as p_const
 from sudoku.puzzle import Puzzle, make_grid_from_string
 
+
+class Solution:
+    def __init__(self, puzzle_sol=None):
+        self.sol = puzzle_sol
+
+    def set_sol(self, sol):
+        if self.sol is None:
+            self.sol = sol
+
+    def __str__(self):
+        return self.sol
+
 class PuzzleInvalidException(Exception):
     """Exception raised when puzzle is invalid
     """
@@ -177,9 +189,11 @@ class PuzzleSolver(object):
         assigns the next candidate value to the empty square with the less candidates
         recursively calls solve() on the new puzzle
         """
+
         if self._is_solved():
             print("sortie is_solved n°1   ---------------------------------------------------------------------")
             print(str(self))
+            solution.set_sol(str(self))
             return self
 
         next_square = self._get_next_square()
@@ -218,8 +232,12 @@ class PuzzleSolver(object):
         return str(self.search())
 
 
+solution = Solution()
+
 
 def main(argv):
+
+    global solution
     #
     # # require search
     # g1 = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
@@ -233,7 +251,7 @@ def main(argv):
     partial_s2 = '172.895.454..2781989.5142.7254938176937165428681742395315496782468271953729853641'
     s2 = '172389564543627819896514237254938176937165428681742395315496782468271953729853641'
     solve_puzzle('g2', g2, s2)
-    print()
+    print('solution is :', solution)
 
     # exits with "stuck there"
     g3 = '58261..9.3..79528117928..6....4389..9..126..8..89571..25..61.79.9..72..3....496.2'
